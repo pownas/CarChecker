@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using System.Net.Http;
 using Microsoft.MobileBlazorBindings.Authentication;
 using CarChecker.Auth;
+using CarChecker.Data;
 
 namespace CarChecker
 {
@@ -31,7 +32,7 @@ namespace CarChecker
                     services.AddProtectedStorage();
 
                     // Other DI services
-                    //                    services.AddScoped<ILocalVehiclesStore, LocalVehiclesStore>();
+                    services.AddScoped<ILocalVehiclesStore, AppVehiclesStore>();
 
                     // Add the http client as the default to inject.
                     services.AddScoped<HttpClient>(sp =>

@@ -2,7 +2,7 @@
 @attribute [Authorize]
 @inject NavigationManager Navigation
 @inject ILocalVehiclesStore LocalVehiclesStore
-@inject IStringLocalizer<App> Localize
+@inject IStringLocalizer<HybridApp> Localize
 
 <AuthorizeView>
     <header>
@@ -35,7 +35,7 @@
 @code {
     Overlay loginStatusOverlay;
 
-    [RegularExpression("[a-zA-Z0-9]+(\\-[a-zA-Z0-9]+)*\\-{0,1}", ErrorMessageResourceType = typeof(Resources.App), ErrorMessageResourceName = nameof(Resources.App.LicenseNumberIncorrectFormat))]
+    [RegularExpression("[a-zA-Z0-9]+(\\-[a-zA-Z0-9]+)*\\-{0,1}", ErrorMessageResourceType = typeof(Resources.HybridApp), ErrorMessageResourceName = nameof(Resources.HybridApp.LicenseNumberIncorrectFormat))]
     public string LicenseNumber { get; set; }
 
     async Task<IEnumerable<string>> GetLicenseAutocompleteItems(string prefix)

@@ -42,6 +42,10 @@ namespace CarChecker.Server
                 {
                     options.IdentityResources["profile"].UserClaims.Add("firstname");
                     options.IdentityResources["profile"].UserClaims.Add("lastname");
+                    options.Clients["CarChecker.Windows"].AllowedScopes.Add("offline_access");
+                    options.Clients["CarChecker.Windows"].AllowOfflineAccess = true;
+                    options.Clients["CarChecker"].AllowedScopes.Add("offline_access");
+                    options.Clients["CarChecker"].AllowOfflineAccess = true;
                 });
 
             services.AddAuthentication()

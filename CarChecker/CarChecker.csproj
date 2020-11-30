@@ -35,10 +35,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Update="Resources\App.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="App.resx" />
-    <EmbeddedResource Update="Resources\App.resx">
+    <Compile Update="Resources\HybridApp.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="HybridApp.resx" />
+    <EmbeddedResource Update="Resources\HybridApp.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>App.Designer.cs</LastGenOutput>
+      <LastGenOutput>HybridApp.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
