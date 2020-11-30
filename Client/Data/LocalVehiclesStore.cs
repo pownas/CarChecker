@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CarChecker.Data;
 using CarChecker.Shared;
 using Microsoft.JSInterop;
 
@@ -14,7 +15,7 @@ namespace CarChecker.Client.Data
     // This would not be needed if we assumed that network access was always
     // available.
 
-    public class LocalVehiclesStore
+    public class LocalVehiclesStore : ILocalVehiclesStore
     {
         private readonly HttpClient httpClient;
         private readonly IJSRuntime js;

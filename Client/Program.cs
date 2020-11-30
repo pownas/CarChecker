@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using CarChecker.Client.Data;
+using CarChecker.WebUI;
+using CarChecker.Data;
 
 namespace CarChecker.Client
 {
@@ -26,7 +28,7 @@ namespace CarChecker.Client
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             // Other DI services
-            builder.Services.AddScoped<LocalVehiclesStore>();
+            builder.Services.AddScoped<ILocalVehiclesStore, LocalVehiclesStore>();
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("CarChecker.ServerAPI"));
             builder.Services.AddApiAuthorization();
             builder.Services.AddScoped<AccountClaimsPrincipalFactory<RemoteUserAccount>, OfflineAccountClaimsPrincipalFactory>();

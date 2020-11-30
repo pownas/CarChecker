@@ -8,9 +8,9 @@ using Xamarin.Forms;
 
 namespace CarChecker
 {
-    public class App : Application
+    public class HybridApp : Application
     {
-        public App(IFileProvider fileProvider = null)
+        public HybridApp(IFileProvider fileProvider = null)
         {
             var hostBuilder = MobileBlazorBindingsHost.CreateDefaultBuilder()
                 .ConfigureServices((hostContext, services) =>
@@ -19,7 +19,6 @@ namespace CarChecker
                     services.AddBlazorHybrid();
 
                     // Register app-specific services
-                    services.AddSingleton<CounterState>();
                 })
                 .UseWebRoot("wwwroot");
 
@@ -33,7 +32,7 @@ namespace CarChecker
             }
             var host = hostBuilder.Build();
 
-            MainPage = new ContentPage { Title = "My Application" };
+            MainPage = new ContentPage { Title = "CarChecker" };
             host.AddComponent<Main>(parent: MainPage);
         }
 

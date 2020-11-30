@@ -25,7 +25,7 @@ namespace CarChecker.macOS
             NSApplication.SharedApplication.MainMenu = MakeMainMenu();
 
             Xamarin.Forms.Forms.Init();
-            LoadApplication(new App());
+            LoadApplication(new HybridApp());
             base.DidFinishLaunching(notification);
         }
 

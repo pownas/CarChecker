@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+﻿using CarChecker.Data;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -18,7 +19,7 @@ namespace CarChecker.Client.Data
 
         public override async ValueTask<ClaimsPrincipal> CreateUserAsync(RemoteUserAccount account, RemoteAuthenticationUserOptions options)
         {
-            var localVehiclesStore = services.GetRequiredService<LocalVehiclesStore>();
+            var localVehiclesStore = services.GetRequiredService<ILocalVehiclesStore>();
 
             var result = await base.CreateUserAsync(account, options);
             if (result.Identity.IsAuthenticated)

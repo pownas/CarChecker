@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace CarChecker.Client.Data
+namespace CarChecker.Data
 {
     public static class DataUrl
     {

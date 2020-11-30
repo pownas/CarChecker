@@ -1,12 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject SignOutSessionStateManager SignOutManager
 @inject NavigationManager Navigation
-@inject LocalVehiclesStore LocalVehiclesStore
+@inject ILocalVehiclesStore LocalVehiclesStore
 @inject IStringLocalizer<App> Localize
 
 <AuthorizeView>
     <div class="username">
-        <img src="user.svg" />
+        <img src="_content/CarChecker/user.svg" />
         <div>
             <div><strong>@context.User.FirstName() @context.User.LastName()</strong></div>
             <div>@context.User.Email()</div>

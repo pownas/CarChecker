@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace CarChecker.Client.Data
+namespace CarChecker.Data
 {
     public static class UserExtensions
     {

@@ -26,7 +26,7 @@ namespace CarChecker.iOS
             global::Xamarin.Forms.Forms.Init();
 
             // For iOS, wrap inside a navigation page, otherwise the header looks wrong
-            var formsApp = new App();
+            var formsApp = new HybridApp();
             formsApp.MainPage = new NavigationPage(formsApp.MainPage);
 
             LoadApplication(formsApp);

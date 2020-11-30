@@ -18,7 +18,7 @@ namespace CarChecker.Windows
         {
             Forms.Init();
             BlazorHybridWindows.Init();
-            LoadApplication(new App());
+            LoadApplication(new HybridApp());
         }
     }
 }

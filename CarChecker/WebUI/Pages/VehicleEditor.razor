@@ -1,7 +1,7 @@
 ﻿@page "/vehicle/{LicenseNumber}"
 @attribute [Authorize]
 @inject IJSRuntime JS
-@inject LocalVehiclesStore LocalVehiclesStore
+@inject ILocalVehiclesStore LocalVehiclesStore
 @inject NavigationManager Navigation
 @inject IStringLocalizer<App> Localize
 
@@ -25,8 +25,8 @@
     {
         <main class="vehicle-details with-footer">
             <div class="vehicle-viewer">
-                <SceneView Environment="3d/sky.png"
-                           DisplayObjectUrl="3d/car.json"
+                <SceneView Environment="_content/CarChecker/3d/sky.png"
+                           DisplayObjectUrl="_content/CarChecker/3d/car.json"
                            SelectedObject="@selectedPart.ToString()"
                            HighlightObjects="@damagedParts.Select(p => p.ToString())"
                            OnObjectClicked="SetSelectedPart" />
