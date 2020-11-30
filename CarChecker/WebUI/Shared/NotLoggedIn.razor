@@ -1,12 +1,21 @@
 @inject NavigationManager Navigation
 @inject IStringLocalizer<App> Localize
+@inject IAccountManager AccountManager 
 
 <header>
     <span class="title">@Localize["Car Checker"]</span>
 </header>
 
 <main class="container">
-    <a class="login" href="authentication/login?returnUrl=@Uri.EscapeDataString(Navigation.Uri)">
+    <a href="#" class="login" @onclick="Login">
         @Localize["Log in"]
     </a>
 </main>
+
+@code
+{
+    public async Task Login()
+    {
+        await this.AccountManager.SignIn();
+    }
+}

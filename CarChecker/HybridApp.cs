@@ -5,6 +5,7 @@ using Microsoft.MobileBlazorBindings;
 using Xamarin.Forms;
 using System.Net.Http;
 using Microsoft.MobileBlazorBindings.Authentication;
+using CarChecker.Auth;
 
 namespace CarChecker
 {
@@ -41,9 +42,18 @@ namespace CarChecker
                         return httpClientFactory.CreateClient("CarChecker.ServerAPI");
                     });
 
-                    services.AddApiAuthorization(BaseAddress);
+                    var configurationEndpoint = (Device.RuntimePlatform == Device.WPF) ?
+                        "https://localhost:5001/_configuration/CarChecker.Windows" :
+                        "https://localhost:5001/_configuration/CarChecker";
+
+                    services.AddApiAuthorization((RemoteAuthenticationOptions<ApiAuthorizationProviderOptions> configure) =>
+                    {
+                        configure.ProviderOptions.ConfigurationEndpoint = configurationEndpoint;
+                    });
 //                    services.AddScoped<AccountClaimsPrincipalFactory<RemoteUserAccount>, OfflineAccountClaimsPrincipalFactory>();
                     services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+                    services.AddScoped<IAccountManager, AppAccountManager>();
 
                 })
                 .UseWebRoot("wwwroot");

@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using CarChecker.Client.Data;
 using CarChecker.WebUI;
 using CarChecker.Data;
+using CarChecker.Auth;
+using CarChecker.Client.Auth;
 
 namespace CarChecker.Client
 {
@@ -33,7 +35,7 @@ namespace CarChecker.Client
             builder.Services.AddApiAuthorization();
             builder.Services.AddScoped<AccountClaimsPrincipalFactory<RemoteUserAccount>, OfflineAccountClaimsPrincipalFactory>();
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
+            builder.Services.AddScoped<IAccountManager, WebAccountManager>();
             await builder.Build().RunAsync();
         }
     }

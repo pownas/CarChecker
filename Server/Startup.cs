@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using CarChecker.Server.Data;
 using CarChecker.Server.Models;
+using IdentityServer4.Validation;
 
 namespace CarChecker.Server
 {
@@ -50,6 +51,8 @@ namespace CarChecker.Server
             services.AddRazorPages();
 
             services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
+
+            services.AddSingleton<IRedirectUriValidator, MyOwnValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
