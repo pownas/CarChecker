@@ -1,18 +1,18 @@
 ﻿using CarChecker.Data;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
+using Microsoft.MobileBlazorBindings.Authentication;
+using Microsoft.MobileBlazorBindings.Authentication.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace CarChecker.Client.Data
+namespace CarChecker.Data
 {
-    public class OfflineAccountClaimsPrincipalFactory : AccountClaimsPrincipalFactory<RemoteUserAccount>
+    public class AppOfflineAccountClaimsPrincipalFactory : AccountClaimsPrincipalFactory<RemoteUserAccount>
     {
         private readonly IServiceProvider services;
 
-        public OfflineAccountClaimsPrincipalFactory(IServiceProvider services, IAccessTokenProviderAccessor accessor) : base(accessor)
+        public AppOfflineAccountClaimsPrincipalFactory(IServiceProvider services, IAccessTokenProviderAccessor accessor) : base(accessor)
         {
             this.services = services;
         }

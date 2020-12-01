@@ -33,7 +33,7 @@ namespace CarChecker.Client
             builder.Services.AddScoped<ILocalVehiclesStore, LocalVehiclesStore>();
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("CarChecker.ServerAPI"));
             builder.Services.AddApiAuthorization();
-            builder.Services.AddScoped<AccountClaimsPrincipalFactory<RemoteUserAccount>, OfflineAccountClaimsPrincipalFactory>();
+            builder.Services.AddScoped<AccountClaimsPrincipalFactory<RemoteUserAccount>, WebAssemblyOfflineAccountClaimsPrincipalFactory>();
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
             builder.Services.AddScoped<IAccountManager, WebAccountManager>();
             await builder.Build().RunAsync();

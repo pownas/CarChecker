@@ -51,7 +51,8 @@ namespace CarChecker
                     {
                         configure.ProviderOptions.ConfigurationEndpoint = configurationEndpoint;
                     });
-//                    services.AddScoped<AccountClaimsPrincipalFactory<RemoteUserAccount>, OfflineAccountClaimsPrincipalFactory>();
+
+                    services.AddScoped(typeof(AccountClaimsPrincipalFactory<RemoteUserAccount>), typeof(AppOfflineAccountClaimsPrincipalFactory));
                     services.AddLocalization(options => options.ResourcesPath = "Resources");
 
                     services.AddScoped<IAccountManager, AppAccountManager>();

@@ -1,10 +1,16 @@
 ﻿using CarChecker.Shared;
+using LiteDB;
 using Microsoft.MobileBlazorBindings.ProtectedStorage;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarChecker.Data
@@ -12,10 +18,15 @@ namespace CarChecker.Data
     /// <summary>
     /// App implementation of a vehicle store.
     /// </summary>
-    internal class AppVehiclesStore : ILocalVehiclesStore
+    internal sealed class AppVehiclesStore : ILocalVehiclesStore, IDisposable
     {
         private readonly HttpClient httpClient;
         private readonly IProtectedStorage protectedStorage;
+        private LiteDatabase liteDatabase;
+        private Task initTask;
+
+        private ILiteCollection<Vehicle> vehicles;
+        private ILiteCollection<Vehicle> localEdits;
 
         public AppVehiclesStore(HttpClient httpClient, IProtectedStorage protectedStorage)
         {
@@ -23,9 +34,17 @@ namespace CarChecker.Data
             this.protectedStorage = protectedStorage ?? throw new ArgumentNullException(nameof(protectedStorage));
         }
 
-        public ValueTask<string[]> Autocomplete(string prefix)
+        public async ValueTask<string[]> Autocomplete(string prefix)
         {
-            throw new NotImplementedException();
+            await EnsureLiteDb();
+
+            return await Task.Run(() => this.vehicles
+                .Query()
+                .Where(x => x.LicenseNumber.StartsWith(prefix))
+                .OrderBy(x => x.LicenseNumber)
+                .Select(x => x.LicenseNumber)
+                .Limit(5)
+                .ToArray());
         }
 
         public async ValueTask<DateTime?> GetLastUpdateDateAsync()
@@ -35,39 +54,144 @@ namespace CarChecker.Data
 
         public async ValueTask<Vehicle[]> GetOutstandingLocalEditsAsync()
         {
-            return await this.protectedStorage.GetAsync<Vehicle[]>("local_edits") ?? Array.Empty<Vehicle>();
+            await EnsureLiteDb();
+            return await Task.Run(() => this.localEdits.Query().ToArray());
         }
 
-        public Task<Vehicle> GetVehicle(string licenseNumber)
+        public async Task<Vehicle> GetVehicle(string licenseNumber)
         {
-            throw new NotImplementedException();
+            await EnsureLiteDb();
+
+            return await Task.Run(() =>
+            {
+                var result = this.localEdits.Query().Where(x => x.LicenseNumber.Equals(licenseNumber, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                
+                if (result != null)
+                {
+                    return result;
+                }
+
+                return this.vehicles.Query().Where(x => x.LicenseNumber.Equals(licenseNumber, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            });
         }
 
-        public Task<ClaimsPrincipal> LoadUserAccountAsync()
+        public async Task<ClaimsPrincipal> LoadUserAccountAsync()
         {
-            throw new NotImplementedException();
+            var bytes = await this.protectedStorage.GetAsync<byte[]>("claims_principal");
+
+            if (bytes != null)
+            {
+                using var stream = new MemoryStream(bytes);
+                using var reader = new BinaryReader(stream);
+                return new ClaimsPrincipal(reader);
+            }
+            else
+            {
+                return new ClaimsPrincipal(new ClaimsIdentity());
+            }
         }
 
-        public ValueTask SaveUserAccountAsync(ClaimsPrincipal user)
+        public async ValueTask SaveUserAccountAsync(ClaimsPrincipal user)
         {
-            throw new NotImplementedException();
+            if (user == null)
+            {
+                await this.protectedStorage.DeleteAsync("claims_principal");
+            } else
+            {
+                using var stream = new MemoryStream();
+                using var writer = new BinaryWriter(stream);
+                user.WriteTo(writer);
+                await this.protectedStorage.SetAsync("claims_principal", stream.ToArray());
+            }
         }
 
-        public ValueTask SaveVehicleAsync(Vehicle vehicle)
+        public async ValueTask SaveVehicleAsync(Vehicle vehicle)
         {
-            throw new NotImplementedException();
+            await EnsureLiteDb();
+            await Task.Run(() => this.localEdits.Upsert(vehicle.LicenseNumber, vehicle));
         }
 
-        public Task SynchronizeAsync()
+        public async Task SynchronizeAsync()
         {
-            throw new NotImplementedException();
+            await EnsureLiteDb();
+            await Task.Run<Task>(async () =>
+            {
+                // If there are local edits, always send them first
+                foreach (var editedVehicle in this.localEdits.Query().ToArray())
+                {
+                    (await httpClient.PutAsJsonAsync("api/vehicle/details", editedVehicle)).EnsureSuccessStatusCode();
+                    this.localEdits.Delete(editedVehicle.LicenseNumber);
+                }
+            }).Unwrap();
+
+            await FetchChangesAsync();
         }
 
-
-        class ClaimData
+        private async Task FetchChangesAsync()
         {
-            public string Type { get; set; }
-            public string Value { get; set; }
+            await EnsureLiteDb();
+            var syncDate = DateTime.Now;
+            var mostRecentlyUpdated = this.vehicles.Query().OrderByDescending(x => x.LastUpdated).FirstOrDefault();
+            var since = mostRecentlyUpdated?.LastUpdated ?? DateTime.MinValue;
+
+            // trick to leave timezone info behind.
+            since = new DateTime(since.Ticks, DateTimeKind.Unspecified);
+            var vehicles = await httpClient.GetFromJsonAsync<Vehicle[]>($"api/vehicle/changedvehicles?since={since:o}");
+            foreach (var vehicle in vehicles)
+            {
+                this.vehicles.Upsert(vehicle.LicenseNumber, vehicle);
+            }
+            await this.protectedStorage.SetAsync("last_update_date", syncDate);
+        }
+
+        private async Task EnsureLiteDb()
+        {
+            if (liteDatabase != null)
+            {
+                return;
+            }
+
+            void InitTask()
+            {
+                var dbFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Assembly.GetExecutingAssembly().GetName().Name);
+                
+                if (!Directory.Exists(dbFolder))
+                {
+                    Directory.CreateDirectory(dbFolder);
+                }
+
+                var dbLocation = Path.Combine(dbFolder, "lite.db");
+                liteDatabase = new LiteDatabase(dbLocation);
+
+                vehicles = liteDatabase.GetCollection<Vehicle>("vehicles");
+
+                vehicles.EnsureIndex(x => x.LicenseNumber);
+                vehicles.EnsureIndex(x => x.LastUpdated);
+
+                localEdits = liteDatabase.GetCollection<Vehicle>("localEdits");
+
+                localEdits.EnsureIndex(x => x.LicenseNumber);
+                localEdits.EnsureIndex(x => x.LastUpdated);
+            }
+
+            Task task = null;
+
+            if ((task = Interlocked.CompareExchange(ref initTask, new Task(InitTask), null)) == null)
+            {
+                task = initTask;
+                task.Start(TaskScheduler.Default);
+            }
+
+            await task;
+        }
+
+        public void Dispose()
+        {
+            if (liteDatabase != null)
+            {
+                liteDatabase.Dispose();
+                liteDatabase = null;
+            }
         }
     }
 }
