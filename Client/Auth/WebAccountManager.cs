@@ -31,6 +31,13 @@ namespace CarChecker.Client.Auth
         }
 
         /// <inheritdoc/>
+        public Task Profile()
+        {
+            this.navigationManager.NavigateTo("authentication/profile");
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
         public Task SignIn()
         {
             this.navigationManager.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(this.navigationManager.Uri)}");

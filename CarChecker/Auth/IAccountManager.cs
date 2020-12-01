@@ -19,5 +19,10 @@ namespace CarChecker.Auth
         /// Signs the user out.
         /// </summary>
         Task SignOut();
+
+        /// <summary>
+        /// Opens the profile in the system browser.
+        /// </summary>
+        Task Profile();
     }
 }

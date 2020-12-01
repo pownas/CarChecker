@@ -43,13 +43,16 @@ namespace CarChecker
                         return httpClientFactory.CreateClient("CarChecker.ServerAPI");
                     });
 
+
                     var configurationEndpoint = (Device.RuntimePlatform == Device.WPF) ?
-                        "https://localhost:5001/_configuration/CarChecker.Windows" :
-                        "https://localhost:5001/_configuration/CarChecker";
+                        $"{BaseAddress}_configuration/CarChecker.Windows" :
+                        $"{BaseAddress}_configuration/CarChecker";
 
                     services.AddApiAuthorization((RemoteAuthenticationOptions<ApiAuthorizationProviderOptions> configure) =>
                     {
                         configure.ProviderOptions.ConfigurationEndpoint = configurationEndpoint;
+                        configure.AuthenticationPaths.RemoteProfilePath = $"{BaseAddress}Identity/Account/Manage";
+                        configure.AuthenticationPaths.RemoteRegisterPath = $"{BaseAddress}Identity/Account/Register";
                     });
 
                     services.AddScoped(typeof(AccountClaimsPrincipalFactory<RemoteUserAccount>), typeof(AppOfflineAccountClaimsPrincipalFactory));

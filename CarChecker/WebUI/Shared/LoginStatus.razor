@@ -13,19 +13,24 @@
         </div>
     </div>
     <div class="user-actions">
-        <a class="text-button" href="authentication/profile">
+        <button type="button" class="text-button" @onclick="Profile">
             @Localize["Manage account"]
-        </a>
-        <button class="text-button" @onclick="BeginLogOut">
+        </button>
+        <button type="button" class="text-button" @onclick="LogOut">
             @Localize["Log out"]
         </button>
     </div>
 </AuthorizeView>
 
 @code {
-    private async Task BeginLogOut()
+    private async Task LogOut()
     {
         await LocalVehiclesStore.SaveUserAccountAsync(null);
         await AccountManager.SignOut();
+    }
+
+    private async Task Profile()
+    {
+        await AccountManager.Profile();
     }
 }
