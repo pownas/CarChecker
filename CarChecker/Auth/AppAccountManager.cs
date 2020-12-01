@@ -44,6 +44,10 @@ namespace CarChecker.Auth
                     };
                     Process.Start(ps);
                     break;
+                case Device.iOS:
+                case Device.macOS:
+                    await Browser.OpenAsync(this.options.AuthenticationPaths.RemoteProfilePath, BrowserLaunchMode.External);
+                    break;
                 default:
                     await Browser.OpenAsync(this.options.AuthenticationPaths.RemoteProfilePath, BrowserLaunchMode.SystemPreferred);
                     break;

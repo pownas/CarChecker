@@ -81,14 +81,19 @@ namespace CarChecker.Data
 
             if (bytes != null)
             {
-                using var stream = new MemoryStream(bytes);
-                using var reader = new BinaryReader(stream);
-                return new ClaimsPrincipal(reader);
+                try
+                {
+                    using var stream = new MemoryStream(bytes);
+                    using var reader = new BinaryReader(stream);
+                    return new ClaimsPrincipal(reader);
+                }
+                catch
+                { 
+                    // we don't want to fail on trying to restore a claimsprincipal.
+                }
             }
-            else
-            {
-                return new ClaimsPrincipal(new ClaimsIdentity());
-            }
+
+            return new ClaimsPrincipal(new ClaimsIdentity());
         }
 
         public async ValueTask SaveUserAccountAsync(ClaimsPrincipal user)

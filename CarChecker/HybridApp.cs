@@ -12,7 +12,9 @@ namespace CarChecker
 {
     public class HybridApp : Application
     {
-        private const string BaseAddress = "https://localhost:5001/";
+        // ngrok is the best way to have a reverse proxy for development with all the emulators.
+        // create a free account and download the utility and redirect port 5000.
+        private const string BaseAddress = "https://0c6087ee2ca1.ngrok.io/";
 
         public HybridApp(IFileProvider fileProvider = null)
         {
