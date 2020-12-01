@@ -71,7 +71,8 @@ namespace CarChecker
             var host = hostBuilder.Build();
 
             MainPage = new ContentPage { Title = "CarChecker" };
-            host.AddComponent<Main>(parent: MainPage);
+            NavigationPage.SetHasNavigationBar(MainPage, false);
+           host.AddComponent<Main>(parent: MainPage);
         }
 
         protected override void OnStart()
