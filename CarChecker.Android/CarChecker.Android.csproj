@@ -58,11 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.MobileBlazorBindings.Authentication">
-      <Version>0.6.9-preview-g786e82cd22</Version>
+      <Version>0.6.30-preview</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.MobileBlazorBindings.WebView.Android" Version="0.6.9-preview-g786e82cd22" />
+    <PackageReference Include="Microsoft.MobileBlazorBindings.WebView.Android" Version="0.6.30-preview" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.7.1" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.0-pre4" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.0" />
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1687" />
   </ItemGroup>
   <ItemGroup>
