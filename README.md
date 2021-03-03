@@ -1,3 +1,7 @@
+Kolla in den andra branschen som innehåller flertalet nativa appar av koden:
+https://github.com/pownas/CarChecker/tree/mobile-blazor-bindings
+
+
 # CarChecker - a Blazor sample app
 This is a sample application for [Blazor](https://blazor.net) which was presented at Build 2020.  You can view the on-demand walk-through for this on Channel 9: [Modern Web UI with Blazor WebAssembly](https://aka.ms/blazor-in-action).
 
